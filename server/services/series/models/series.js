@@ -4,26 +4,26 @@ const {ObjectId} = require('mongodb')
 
 class TvShow{
     static find(){
-        return getDatabase().collection('tvshow').find().toArray()
+        return getDatabase().collection('series').find().toArray()
     }
     static findOne(id){
-        return getDatabase().collection('tvshow').findOne({
+        return getDatabase().collection('series').findOne({
             _id: ObjectId(id)
         })
     }
 
     static create(data){
-        return getDatabase().collection('tvshow').insertOne(data)
+        return getDatabase().collection('series').insertOne(data)
     }
 
     static delete(id){
-        return getDatabase().collection('tvshow').deleteOne({
+        return getDatabase().collection('series').deleteOne({
             _id:ObjectId(id)
         })
     }
 
     static update(id,data){
-        return getDatabase().collection('tvshow').replaceOne({
+        return getDatabase().collection('series').replaceOne({
             _id:ObjectId(id),      
         },data)
     }

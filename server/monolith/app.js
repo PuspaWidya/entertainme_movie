@@ -16,12 +16,9 @@ app.get('/',(req,res)=>{
 
 
 app.get('/movies',(req,res)=>{
-    // const data = getDatabase()
-    // console.log(data,'DATABASE')
-    // res.status(200).json(data)
-    getDatabase().collection('movies').find().toArray()
+    getDatabase().collection('movie').find().toArray()
     .then(data=>{
-        res.status(200).json({data})
+        res.status(200).json(data)
     })
 })
 

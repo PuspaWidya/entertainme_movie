@@ -1,9 +1,10 @@
-const TvShow = require('../models/series')
+let TvShow = require('../models/series')
 
 class TvShowController{
     static getAll(req,res){
         TvShow.find()
         .then(data=>{
+            // console.log(data)
             res.status(200).json(data)
         })
         .catch(console.log)

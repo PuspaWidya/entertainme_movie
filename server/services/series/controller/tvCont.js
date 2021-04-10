@@ -1,26 +1,44 @@
 let TvShow = require('../models/series')
+const Redis = require("ioredis");
+const redis = new Redis();
+
 
 class TvShowController{
-    static getAll(req,res){
-        TvShow.find()
-        .then(data=>{
-            // console.log(data)
-            res.status(200).json(data)
-        })
-        .catch(console.log)
+    static async getAll(req,res){
+       try{
+           const cache = await redis.get('series:data')
+           if(cache){
+            res.status(200).json(cache)
+           }else{
+            const series = await TvShow.find()
+            redis.set('series:data',series)
+            res.status(200).json(series)
+           }
+        }
+        catch(err){
+            console.log(err)
+        }
     }
 
-    static getOne(req,res){
-        TvShow.findOne(req.params.id)
-        .then(data=>{
+    static async getOne(req,res){
+        try{
+            const cache = await redis.get('seri:data')
+            if(cache){
+            res.status(200).json(cache)
+            }else{
+            const data = await TvShow.findOne(req.params.id)
+            redis.set('seri:data',data)
             res.status(200).json(data)
-        })
-        .catch(console.log)
-    }
+            }
+          }
+        catch(err){
+            console.log(err)
+    }}
 
     static async createTvShow(req,res){
-       
         try{
+            redis.del('series:data')
+            redis.del('seri:data')
             let arr =[]
             let {title,overview,poster_path,popularity,tags} = req.body
             arr.push(tags)
@@ -36,6 +54,8 @@ class TvShowController{
 
     static async editAll(req,res){
         try{
+            redis.del('series:data')
+            redis.del('seri:data')
             let {title,overview,poster_path,popularity,tags} = req.body
             let arr = []
             arr.push(tags)
@@ -49,14 +69,12 @@ class TvShowController{
         }
     }
     static async destroy(req,res){
-        const id = req.body.id
+        const id = req.params.id
         try{
-          const response = await TvShow.delete(id)
-          if(response.ressult.ok === 1){
-                res.status(200).json({message:' Data is deleted'})
-          }else{
-              res.status(404).json({message:'Data not found'})
-          }
+            redis.del('series:data')
+            redis.del('seri:data')
+            const response = await TvShow.delete(id)
+            res.status(200).json(response) 
         }
         catch(err){
             console.log(err)

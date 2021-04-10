@@ -1,32 +1,66 @@
-const Movie = require('../models/Movie')
+const Redis = require("ioredis");
+const redis = new Redis()
+const axios = require('axios');
+
 
 class MovieController{
-    static getAll(req,res){
-        Movie.find()
-        .then(data=>{
-            res.status(200).json(data)
-        })
-        .catch(console.log)
+    static async getAll(req,res){
+        try{
+            const moviesRedis = await redis.get("movies:data")
+            if(!moviesRedis){
+                // console.log('test')
+                const {data} = await axios.get("http://localhost:4001/movies")
+                await redis.set("movies:data",JSON.stringify(data))
+                res.status(200).json(data)
+            }else{
+                // console.log('redis')
+                res.status(200).json(JSON.parse(moviesRedis));
+            }
+        }
+        catch(err){
+            console.log(err,'>>>>>>>>>>>>>')
+            res.status(500).json(err)
+        }
+     
     }
 
-    static getOne(req,res){
-        Movie.findOne(req.params.id)
-        .then(data=>{
-            res.status(200).json(data)
-        })
-        .catch(console.log)
+    static async getOne(req,res){
+        try{
+            const readOneRedis = await redis.get("movies:one")
+            if(readOneRedis){
+                // console.log('masuk redis')
+                res.status(200).json(JSON.parse(readOneRedis))
+            }else{
+                // console.log('tesst')
+                const {data} = await axios.get(`http://localhost:4001/movies/${req.params.id}`)
+                await redis.set("movies:one",JSON.stringify(data))
+                res.status(200).json(data)
+            }
+        }
+        catch(err){
+            res.status(500).json(err)
+            console.log(err)
+        }
+
+
     }
 
     static async createMovie(req,res){
        
         try{
-
+            await redis.del("movies:data")
+            await redis.del("entertainme:data")
             let arr =[]
             let {title,overview,poster_path,popularity,tags} = req.body
             arr.push(tags)
             let obj = {title,overview,poster_path,popularity,tags:arr}
-            const newMovie =  await Movie.create(obj)
-            res.status(200).json(newMovie)
+            const {data} =  await axios({
+                method:"POST",
+                url:"http://localhost:4001/movies",
+                data:{obj}})
+            if(data.ok === 1){
+                res.status(200).json({message:'new movies added'})
+            }
         }
         catch(err) {
         console.log(err)
@@ -36,12 +70,18 @@ class MovieController{
 
     static async editAll(req,res){
         try{
+            await redis.del("movies:data")
+            await redis.del("entertainme:data")
             let {title,overview,poster_path,popularity,tags} = req.body
             let arr = []
             arr.push(tags)
-            let obj = {title,overview,poster_path,popularity : parseFloat(popularity),tags:arr}
-            const newMovie = await Movie.update(req.params.id,obj)
-            res.status(200).json(newMovie.ops[0])
+            let obj = {title,overview,poster_path,popularity,tags:arr}
+            console.log(obj)
+            const {data} =  await axios({
+                method:"PUT",
+                url:`http://localhost:4001/movies/${req.params.id}`,
+                data:obj})
+            res.status(200).json(data)
         }
         catch(err){
             console.log(err)
@@ -49,20 +89,20 @@ class MovieController{
         }
     }
     static async destroy(req,res){
-        const id = req.body.id
         try{
-          const response = await Movie.delete(id)
-          if(response.ressult.ok === 1){
-                res.status(200).json({message:' Data is deleted'})
-          }else{
-              res.status(404).json({message:'Data not found'})
-          }
+            await redis.del("movies:data")
+            await redis.del("entertainme:data")
+            let id = req.params.id
+            await axios.delete(`http://localhost:4001/movies/${id}`)
+            res.status(200).json({message:"data deleted"})
         }
         catch(err){
             console.log(err)
-            res.status(500).json(err)
         }
     }
 }
 
 module.exports = MovieController
+
+
+

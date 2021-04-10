@@ -1,13 +1,13 @@
 const express = require('express')
-const route = express.Router()
+const router = express.Router()
 const TvShowController = require('../controller/tvCont')
 
-route.get('/',TvShowController.getAll)
-route.get('/:id',TvShowController.getOne)
-route.post('/',TvShowController.createTvShow)
+router.get('/',TvShowController.getAll)
+router.get('/:id',TvShowController.getOne)
+router.post('/',TvShowController.createTvShow)
 
 
-route.put('/:id',TvShowController.editAll)
-route.delete('/:id',TvShowController.destroy)
+router.put('/:id',TvShowController.editAll)
+router.delete('/:id',TvShowController.destroy)
 
-module.exports = route 
+module.exports = router

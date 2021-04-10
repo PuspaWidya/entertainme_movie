@@ -10,9 +10,9 @@ connectDB((connected)=>{
 
 
 
-app.get('/',(req,res)=>{
-    res.send('test')
-})
+// app.get('/',(req,res)=>{
+//     res.send('test')
+// })
 
 
 app.get('/movies',(req,res)=>{

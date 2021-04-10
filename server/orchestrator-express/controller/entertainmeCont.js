@@ -15,20 +15,21 @@ class EntertainMeCont{
                   //  let movieData = movie.data
                     const series = await axios.get("http://localhost:4002/series")
                    // let seriesData = series.data
-                 /*   if(movie && series){
+                   res.send(series)
+                   if(movie && series){
                         Promise.all(movieData,seriesData).
                         then(data=>{
                             redis.set('entertainme:data',JSON.stringify(data))
                             res.status(200).json(data)
                         })
-                    }*/
-                            
-                    const entertainMe = {
-                    movies: movie.data,
-                    tvseries: series.data
                     }
-                    redis.set('entertainme:data',JSON.stringify(entertainMe))
-                                    res.status(200).json(data)
+                            
+                    // const entertainMe = {
+                    // movies: movie.data,
+                    // tvseries: series.data
+                    // }
+                    // redis.set('entertainme:data',JSON.stringify(entertainMe))
+                    //                 res.status(200).json(data)
                         }
                         
                     }

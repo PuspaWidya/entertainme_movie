@@ -26,14 +26,15 @@ class MovieController{
 
     static async getOne(req,res){
         try{
-            const readOneRedis = await redis.get("movies:one")
+            let id = req.params.id
+            const readOneRedis = await redis.get("movies:one"+id)
             if(readOneRedis){
                 // console.log('masuk redis')
                 res.status(200).json(JSON.parse(readOneRedis))
             }else{
                 // console.log('tesst')
                 const {data} = await axios.get(`http://localhost:4001/movies/${req.params.id}`)
-                await redis.set("movies:one",JSON.stringify(data))
+                await redis.set("movies:one"+id,JSON.stringify(data))
                 res.status(200).json(data)
             }
         }
@@ -48,8 +49,8 @@ class MovieController{
     static async createMovie(req,res){
        
         try{
-            await redis.del("movies:data")
-            await redis.del("entertainme:data")
+            redis.del("movies:data")
+            redis.del("entertainme:data")
             let arr =[]
             let {title,overview,poster_path,popularity,tags} = req.body
             arr.push(tags)
@@ -70,8 +71,9 @@ class MovieController{
 
     static async editAll(req,res){
         try{
-            await redis.del("movies:data")
-            await redis.del("entertainme:data")
+            redis.del("movies:data")
+            redis.del("entertainme:data")
+            redis.del("movies:one"+req.params.id)
             let {title,overview,poster_path,popularity,tags} = req.body
             let arr = []
             arr.push(tags)
@@ -90,8 +92,9 @@ class MovieController{
     }
     static async destroy(req,res){
         try{
-            await redis.del("movies:data")
-            await redis.del("entertainme:data")
+            redis.del("movies:data")
+            redis.del("entertainme:data")
+            redis.del("movies:one"+req.params.id)
             let id = req.params.id
             await axios.delete(`http://localhost:4001/movies/${id}`)
             res.status(200).json({message:"data deleted"})

@@ -22,12 +22,12 @@ class TvShowController{
 
     static async getOne(req,res){
         try{
-            const cache = await redis.get('seri:data')
+            const cache = await redis.get('seri:data'+req.params.id)
             if(cache){
             res.status(200).json(cache)
             }else{
             const data = await TvShow.findOne(req.params.id)
-            redis.set('seri:data',data)
+            redis.set('seri:data'+req.params.id,data)
             res.status(200).json(data)
             }
           }
@@ -56,6 +56,7 @@ class TvShowController{
         try{
             redis.del('series:data')
             redis.del('seri:data')
+            redis.del('seri:data'+req.params.id)
             let {title,overview,poster_path,popularity,tags} = req.body
             let arr = []
             arr.push(tags)
@@ -73,6 +74,7 @@ class TvShowController{
         try{
             redis.del('series:data')
             redis.del('seri:data')
+            redis.del('seri:data'+req.params.id)
             const response = await TvShow.delete(id)
             res.status(200).json(response) 
         }

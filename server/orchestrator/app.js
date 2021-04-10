@@ -126,16 +126,16 @@ const resolvers = {
       },
       movie: async(parent,args)=>{
         try{
-          const cache = await redis.get('movie:data')
+          const id = args._id
+          const cache = await redis.get('movie:data'+id)
           if(cache){
             return JSON.parse(cache)
           }
-          const id = args._id
           const {data} = await axios({
             url:`http://localhost:4001/movies/${id}`,
             method:'get'
           })
-          redis.set('movie:data', data)
+          redis.set('movie:data'+id, data)
           return data
         }
         catch(err){
@@ -144,16 +144,16 @@ const resolvers = {
       },
       seri: async(parent,args)=>{
         try{
-          const cache = await redis.get('seri:data')
+          const id = args._id
+          const cache = await redis.get('seri:data'+id)
           if(cache){
             return JSON.parse(cache)
           }
-          const id = args._id
           const {data} = await axios({
             url:`http://localhost:4002/series/${id}`,
             method:'get'
           })
-          redis.set('seri:data',data)
+          redis.set('seri:data'+id,data)
           return data
         }
         catch(err){
@@ -167,7 +167,7 @@ const resolvers = {
         const data ={title,overview,poster_path,popularity,tags}
         try{
           await redis.del('series:data')
-          await redis.del('seri:data')
+          // await redis.del('seri:data')
           const newSeries = await axios({
             url:tvSeriesUrl,
             method:'post',
@@ -183,7 +183,7 @@ const resolvers = {
         const {title,overview,poster_path,popularity,tags} = args.data
         const data ={title,overview,poster_path,popularity,tags}
         try{
-          await redis.del('movie:data')
+          // await redis.del('movie:data')
           await redis.del('movies:data')
           const newMovie = await axios({
             url:movieUrl,
@@ -202,7 +202,7 @@ const resolvers = {
       const id = args._id
       try{
         await redis.del('series:data')
-        await redis.del('seri:data')
+        await redis.del('seri:data'+id)
         const {data} = await axios({
           url:tvSeriesUrl+'/'+id,
           method:'DELETE',
@@ -216,7 +216,7 @@ const resolvers = {
     deleteMovie:async(parent,args)=>{
       const id = args._id
       try{
-        await redis.del('movie:data')
+        await redis.del('movie:data'+id)
         await redis.del('movies:data')
         const {data} = await axios({
           url:movieUrl+'/'+id,
@@ -229,9 +229,9 @@ const resolvers = {
       }
     },
     editMovie: async(_,args)=>{
-      await redis.del('movie:data')
-      await redis.del('movies:data')
       let {_id,title,overview,poster_path,popularity,tags} = args.data
+      await redis.del('movie:data'+_id)
+      await redis.del('movies:data')
       const dataMovie = {title,overview,poster_path,popularity,tags}
       // console.log(dataMovie)
      try{
@@ -250,9 +250,9 @@ const resolvers = {
      }
     },
     editSeries: async(_,args)=>{
-      await redis.del('series:data')
-      await redis.del('seri:data')
       let {_id,title,overview,poster_path,popularity,tags} = args.data
+      await redis.del('series:data')
+      await redis.del('seri:data'+_id)
       const dataSeries = {title,overview,poster_path,popularity,tags}
      try{
        let {data} = await axios({

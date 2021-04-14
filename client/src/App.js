@@ -17,6 +17,11 @@ import Navbar from './components/Navbar'
 import Page from './components/page'
 import Favorite from './components/Favorite'
 import Hero from './components/Hero'
+import HeroMovie from './components/heroMovie'
+
+
+
+
 function App() {
   return (
     <ApolloProvider client={client}>
@@ -33,6 +38,7 @@ function App() {
           </Route>
 
           <Route exact path="/movie">
+               <HeroMovie/>
                <Homepage/>
           </Route>
 

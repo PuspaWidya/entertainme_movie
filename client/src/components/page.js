@@ -49,6 +49,7 @@ export default function Page() {
                 <div className="hero-text">
                 <h1>{data.movie.title}</h1>
                 <p>{data.movie.overview}</p>
+                <p>{data.movie.tags}</p>
                 <button
                 type="button" className="btn btn-outline-light btn-lg"
                 onClick={()=>editOne(data.movie._id)}>Edit Movie</button>

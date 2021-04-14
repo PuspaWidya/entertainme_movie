@@ -101,48 +101,66 @@ export default function EditMovie() {
                 
                 
             return (
-            <div>
-            <h1>{JSON.stringify(data)}</h1>
+            <div className="mx-5 my-5" style={{ textAlign: "center"}}>
             <form>
+
+            <div class="mb-3 ">
+            <h2>Title</h2>
             <input
+            class="form-control"
             type="text"
             name="title"
             value={formMovie.title}
             placeholder="title"
             onChange={onChange}/>
+            </div>
 
 
+            <div class="mb-3">
+           <h2>Overview</h2>
              <input
+             class="form-control"
             type="text"
             name="overview"
             value={formMovie.overview}
             placeholder="overview"
             onChange={onChange}/> 
-
-
+            </div>
+            
+            <div class="mb-3">
+            <h2>Poster Url</h2>
              <input
+             class="form-control"
             type="text"
             name="poster_path"
             value={formMovie.poster_path}
             placeholder="poster_path"
             onChange={onChange}/> 
+            </div>
+            
 
-
+            <div class="mb-3">
+            <h2>Popularity</h2>
              <input
+             class="form-control"
             type="number"
             name="popularity"
             value={formMovie.popularity}
             placeholder="popularity"
             onChange={onChange}/>
+             </div>
 
-
+             <div class="mb-3">
+            <h2>Tags</h2>
              <input
+            class="form-control"
             type="text"
             name="tags"
             value={formMovie.tags}
             placeholder="tags"
             onChange={onChange}/>
             <button onClick={(e)=> editMovie(e)}> Edit</button>
+            </div>
         </form>
         </div>
     )

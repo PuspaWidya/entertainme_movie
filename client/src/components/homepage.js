@@ -3,7 +3,7 @@ import { useQuery, gql ,useMutation} from '@apollo/client';
 import { useHistory } from "react-router-dom";
 import {favMovieVar} from '../config/vars'
 import swal from 'sweetalert';
-
+import loadingGif from '../assets/loading.gif'
 
 const GET_MOVIES = gql`
     query movie{
@@ -78,7 +78,10 @@ export default function Homepage() {
 
     if(loading){
         return(
-            <img src="https://lottiefiles.com/8786-loading" alt="Loading"></img>
+            <div style={{position:'center', textAlign:'center', padding:'0'}}>
+            <img src={loadingGif} alt="Empty" style={{width:"100%",height:"100%"}}/>  
+            <h1>Loading</h1>
+            </div>
         )
     }
 

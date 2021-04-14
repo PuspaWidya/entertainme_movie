@@ -1,5 +1,6 @@
 import React ,{useState}from 'react';
 import { useQuery, gql ,useMutation} from '@apollo/client';
+import { useHistory, useParams } from "react-router-dom";
 
 const ADD_MOVIE = gql`
 mutation addMovie($newMovieAdd : movieInputData){
@@ -17,7 +18,8 @@ mutation addMovie($newMovieAdd : movieInputData){
 
 
 export default function Add() {
-    
+    let history = useHistory();
+
     const [addMovie, {data:newData,loading:newLoading,error:newError}
     ] = useMutation(ADD_MOVIE)
     
@@ -51,6 +53,8 @@ export default function Add() {
                 newMovieAdd:obj
             }
         })
+
+        history.push('/movie')
     }
 
     

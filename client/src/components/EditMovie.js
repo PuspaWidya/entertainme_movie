@@ -71,6 +71,7 @@ export default function EditMovie() {
         setFormMovie(newMovie)
     }
     
+    
     const editMovie = (e) =>{
         e.preventDefault();
         // console.log('masuk edit')

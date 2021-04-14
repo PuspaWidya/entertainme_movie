@@ -2,6 +2,8 @@ import React ,{useState}from 'react';
 import { useQuery, gql ,useMutation} from '@apollo/client';
 import { useHistory } from "react-router-dom";
 import {favMovieVar} from '../config/vars'
+import swal from 'sweetalert';
+
 
 const GET_MOVIES = gql`
     query movie{
@@ -26,69 +28,96 @@ mutation deleteMovie($id:ID){
 `
 
 export default function Homepage() {
-let history = useHistory();
-const [deleteMovie,setDelete] = useState(null)
+    let history = useHistory();
 
-const [DeleteData,{data:deleteData,loading:deleteLoading,error:deleteError}]
-= useMutation(DELETE_MOVIE,{
-    refetchQueries:[{
-        query:GET_MOVIES
-    }]
-})
+    const { data,loading, error } = useQuery(GET_MOVIES);
 
-function deleteOne(id){
-    DeleteData({
-        variables :{
-            id:id
-        }
+    const [DeleteData,{data:deleteData,loading:deleteLoading,error:deleteError}]
+    = useMutation(DELETE_MOVIE,{
+        refetchQueries:[{
+            query:GET_MOVIES
+        }]
     })
-}
+
+    function deleteOne(id){
+        swal({
+            title: "Are you sure?",
+            text: "Once deleted, you will not be able to recover this imaginary file!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+          })
+          .then((willDelete) => {
+            if (willDelete) {
+                DeleteData({
+                    variables :{
+                        id:id
+                    }
+                })
+              swal("Your movie has been deleted!", {
+                icon: "success",
+              });
+            } else {
+              swal("Your Movie is safe!");
+            }
+          });
+
+    }
+
+    function showOne (id){
+        history.push(`/movie/${id}`);
+    }
+
+    function addToFav(movie){
+        const existingFav = favMovieVar()
+        // const data = existingFav.concat(movie)
+        // favMovieVar(data)
+        favMovieVar([movie,...existingFav])
+    }
 
 
-
-const { data,loading, error } = useQuery(GET_MOVIES);
-const [movieId,setMovieId]= useState(null)
-
-
-
-function showOne (id){
-    history.push(`/movie/${id}`);
-}
-
-function addToFav(movie){
-    const existingFav = favMovieVar()
-    // const data = existingFav.concat(movie)
-    // favMovieVar(data)
-    favMovieVar([movie,...existingFav])
-}
-
-
-if(loading){
-    return(
-        <h1>LOADING</h1>
-    )
-}
+    if(loading){
+        return(
+            <img src="https://lottiefiles.com/8786-loading" alt="Loading"></img>
+        )
+    }
 
     return (
         <>
-        <div>
+        <div className="homepage">
+            <div className="rowHomepage row row-cols-1 row-cols-md-2 g-4">
             {data.Movies.map(movie =>{
                 return(
                     <>
-                    <li key={movie._id}>
-                    {movie.title}</li>
+                    <div>
+                    <div class="col">
+                        <div class="card">
+                        <img src={movie.poster_path}class="card-img-top" alt="..."/>
+                        <div class="card-body">
+                            <h5 class="card-title">{movie.title}</h5>
+                            <p class="card-text">{movie.overview}</p>
+                    <div className="btnMovie">
                     <button
-                    onClick={()=>showOne(movie._id)}>click</button> 
+                    className="btn btn-outline-primary"
+                    onClick={()=>showOne(movie._id)}>See more..</button> 
                     <button
+                    class="btn btn-outline-danger"
                     onClick={()=>deleteOne(movie._id)}>Delete</button>
                      <button
+                     className="btnfav pe-5"
                     onClick={()=>addToFav(movie)}>Favorite</button>
+                    </div>
+                    </div>
+                        </div>
+                        </div>
+                    </div>
+
                     </>
                     
-                )
-            })}
+                    )
+                })}
+                </div>
         </div>
-        {/* <Page movieId={movieId}/> */}
         </>
     )
 }

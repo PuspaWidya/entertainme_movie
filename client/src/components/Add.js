@@ -19,14 +19,7 @@ mutation addMovie($newMovieAdd : movieInputData){
 export default function Add() {
     
     const [addMovie, {data:newData,loading:newLoading,error:newError}
-    ] = useMutation(ADD_MOVIE,
-    //     {
-    //     refetchQueries:[{
-    //         query:GET_MOVIES
-    //     }]
-    // }
-
-    )
+    ] = useMutation(ADD_MOVIE)
     
     
     const [formMovie,setFormMovie] = useState({
@@ -63,43 +56,68 @@ export default function Add() {
     
     return (
            <>
+           <div className="mx-5 my-5" style={{ textAlign: "center"}}>
            <form>
+           <div class="mb-3 ">
+            <h2>Title</h2>
             <input
+            class="form-control"
             type="text"
             name="title"
             value={formMovie.title}
-            placeholder="title"
+            placeholder="Put your new Movie's title here"
             onChange={onChange}/>
+           </div>
 
+           <div class="mb-3">
+           <h2>Overview</h2>
              <input
+             class="form-control"
             type="text"
             name="overview"
             value={formMovie.overview}
-            placeholder="overview"
+            placeholder="Put your new Movie's overview here"
             onChange={onChange}/>
+             </div>
 
+            <div class="mb-3">
+            <h2>Poster Url</h2>
              <input
+             class="form-control"
             type="text"
             name="poster_path"
             value={formMovie.poster_path}
-            placeholder="poster_path"
+            placeholder="Put your new Movie's pictures here"
             onChange={onChange}/>
+             </div>
 
+            <div class="mb-3">
+            <h2>Popularity</h2>
              <input
+             class="form-control"
             type="number"
             name="popularity"
             value={formMovie.popularity}
-            placeholder="popularity"
+            placeholder="Put your new Movie's ranking here"
             onChange={onChange}/>
+             </div>
 
+            <div class="mb-3">
+            <h2>Tags</h2>
              <input
+             class="form-control"
             type="text"
             name="tags"
             value={formMovie.tags}
-            placeholder="tags"
+            placeholder="Put your new Movie's tags here"
             onChange={onChange}/>
-            <button onClick={(e)=> addNewMovie(e)}> input</button>
+             </div>
+
+            <button
+            className="btn btn-primary"
+            onClick={(e)=> addNewMovie(e)}> input</button>
         </form>
+           </div>
            </>
         )
     

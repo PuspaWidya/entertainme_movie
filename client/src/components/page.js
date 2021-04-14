@@ -39,13 +39,21 @@ export default function Page() {
         history.push(`/edit/${id}`)
         
     }
+
+    const img = data.movie.poster_path
     
     return (
         <div>
             <>
-            <h2>{JSON.stringify(data.movie)}</h2>
-            <button
-            onClick={()=>editOne(data.movie._id)}>Edit</button>
+            <div className="hero-image" style={{backgroundImage:`linear-gradient(rgba(0, 0, 0, 0.5),rgba(0, 0, 0, 0.5)), url(${data.movie.poster_path})`}}>
+                <div className="hero-text">
+                <h1>{data.movie.title}</h1>
+                <p>{data.movie.overview}</p>
+                <button
+                type="button" className="btn btn-outline-light btn-lg"
+                onClick={()=>editOne(data.movie._id)}>Edit Movie</button>
+                </div>
+            </div>
             </>
         </div>
     )

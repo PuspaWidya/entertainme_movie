@@ -7,7 +7,7 @@ export default function Navbar() {
     return (
         <>
             <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-            <a class="navbar-brand">Navbar</a>
+            <a class="navbar-brand">ENTERTAINME</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -30,8 +30,8 @@ export default function Navbar() {
                     </Link>
                 </li>
                 <li class="nav-item">
-                 <Link to="/"> 
-                    <a class="nav-link">HOME</a>
+                 <Link to="/add"> 
+                    <a class="nav-link">Add Movie</a>
                     </Link>
                 </li>
                 </ul>

@@ -29,7 +29,7 @@ const typeDefs = gql`
 
   type Query {
     series: [TvSeries]
-    movies:[Movie]
+    Movies:[Movie]
     movie(_id:ID):Movie
     seri(_id:ID):TvSeries
   }
@@ -71,8 +71,8 @@ const typeDefs = gql`
   type Mutation{
     addSeries(data:seriesInputData):TvSeries
     addMovies(data:movieInputData):Movie
-    deleteSeries(_id:ID!):DeleteResponse
-    deleteMovie(_id:ID!):DeleteResponse
+    deleteSeries(_id:ID):DeleteResponse
+    deleteMovie(_id:ID):DeleteResponse
     editMovie(data:editMovie):Movie
     editSeries(data:editSeries):Status
   }
@@ -107,17 +107,20 @@ const resolvers = {
         }
         catch(err){console.log(err)}
       },
-      movies: async()=>{
+      Movies: async()=>{
       try{
         const cache = await redis.get('movies:data')
         if(cache){
+          // console.log(cache,'<<<<<<<<<')
+          // console.log('MASUK CACHE')
           return JSON.parse(cache)
         }
         const movie = await axios({
           url:movieUrl,
           method:'get'
         })
-        redis.set('movies:data',movie.data)
+        redis.set('movies:data',JSON.stringify(movie.data))
+        // console.log('test')
         return movie.data
       }
       catch(err){
@@ -127,15 +130,20 @@ const resolvers = {
       movie: async(parent,args)=>{
         try{
           const id = args._id
-          const cache = await redis.get('movie:data'+id)
+          // redis.del('movie:data'+id)
+          const cache = await redis.get('movie:data$'+id)
+          // console.log(cache)
           if(cache){
+            // console.log(JSON.parse(cache))
+            console.log('masuk cache')
             return JSON.parse(cache)
           }
           const {data} = await axios({
             url:`http://localhost:4001/movies/${id}`,
             method:'get'
           })
-          redis.set('movie:data'+id, data)
+          console.log('MOVIE')
+          redis.set('movie:data'+id,JSON.stringify(data))
           return data
         }
         catch(err){
@@ -147,13 +155,15 @@ const resolvers = {
           const id = args._id
           const cache = await redis.get('seri:data'+id)
           if(cache){
+            console.log('cache')
             return JSON.parse(cache)
           }
           const {data} = await axios({
             url:`http://localhost:4002/series/${id}`,
             method:'get'
           })
-          redis.set('seri:data'+id,data)
+          redis.set('seri:data'+id,JSON.stringify(data))
+          // console.log(data,'<<<')
           return data
         }
         catch(err){
@@ -166,8 +176,8 @@ const resolvers = {
         const {title,overview,poster_path,popularity,tags} = args.data
         const data ={title,overview,poster_path,popularity,tags}
         try{
-          await redis.del('series:data')
-          // await redis.del('seri:data')
+          redis.del('series:data')
+          redis.del('seri:data')
           const newSeries = await axios({
             url:tvSeriesUrl,
             method:'post',
@@ -190,22 +200,22 @@ const resolvers = {
             method:'post',
             data: data
           })
-          console.log(newMovie)
+          // console.log(newMovie)
           return newMovie.data.ops[0]
         }
         catch(err){
           console.log(err)
         }
     },
-    deleteSeries : async (parent,args)=>{
-      
+    deleteSeries : async (parent,args)=>{ 
       const id = args._id
+      // console.log(id,'MASUK ID')
       try{
-        await redis.del('series:data')
-        await redis.del('seri:data'+id)
+         redis.del('series:data')
+         redis.del('seri:data'+id)
         const {data} = await axios({
           url:tvSeriesUrl+'/'+id,
-          method:'DELETE',
+          method:'delete',
         })
         return data
       }
@@ -213,16 +223,18 @@ const resolvers = {
         console.log(err)
       }
     },
-    deleteMovie:async(parent,args)=>{
-      const id = args._id
+    deleteMovie: async(parent,args)=>{
       try{
-        await redis.del('movie:data'+id)
-        await redis.del('movies:data')
+        const id = args._id
+        console.log(id,'MASUK ID<<<<<<<<<<<<<<<<<')
+        redis.del('movie:data'+id)
+        redis.del('movies:data')
         const {data} = await axios({
-          url:movieUrl+'/'+id,
-          method:'DELETE',
+          url:`http://localhost:4001/movies/${id}`,
+          method:'delete',
         })
-        return data
+        console.log(data)
+         return data
       }
       catch(err){
         console.log(err)
@@ -251,8 +263,8 @@ const resolvers = {
     },
     editSeries: async(_,args)=>{
       let {_id,title,overview,poster_path,popularity,tags} = args.data
-      await redis.del('series:data')
-      await redis.del('seri:data'+_id)
+       redis.del('series:data')
+       redis.del('seri:data'+_id)
       const dataSeries = {title,overview,poster_path,popularity,tags}
      try{
        let {data} = await axios({

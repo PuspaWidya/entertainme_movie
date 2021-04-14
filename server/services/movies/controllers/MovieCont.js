@@ -20,14 +20,8 @@ class MovieController{
 
     static async getOne(req,res){
        try{
-           const cache = await redis.get('movie:data')
-            if(cache){
-            res.status(200).json(cache)
-            }else{
             const data = await Movie.findOne(req.params.id)
-                redis.set('movie:data',data)
                 res.status(200).json(data)
-            }
        }
         catch(err){
         console.log(err)
@@ -70,16 +64,12 @@ class MovieController{
         }
     }
     static async destroy(req,res){
-        const id = req.body.id
         try{
+            const id = req.params.id
             redis.del('movie:data')
             redis.del('movies:data')
-          const response = await Movie.delete(id)
-          if(response.ressult.ok === 1){
-                res.status(200).json({message:' Data is deleted'})
-          }else{
-              res.status(404).json({message:'Data not found'})
-          }
+            const response = await Movie.delete(id)
+            res.status(200).json(response)
         }
         catch(err){
             console.log(err)

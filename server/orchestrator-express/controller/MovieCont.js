@@ -34,7 +34,7 @@ class MovieController{
             }else{
                 // console.log('tesst')
                 const {data} = await axios.get(`http://localhost:4001/movies/${req.params.id}`)
-                await redis.set("movies:one"+id,JSON.stringify(data))
+                redis.set("movies:one"+id,JSON.stringify(data))
                 res.status(200).json(data)
             }
         }

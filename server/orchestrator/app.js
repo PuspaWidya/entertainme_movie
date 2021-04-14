@@ -240,11 +240,15 @@ const resolvers = {
         console.log(err)
       }
     },
+    
     editMovie: async(_,args)=>{
+
+      console.log(args,'ARGS')
       let {_id,title,overview,poster_path,popularity,tags} = args.data
-      await redis.del('movie:data'+_id)
-      await redis.del('movies:data')
-      const dataMovie = {title,overview,poster_path,popularity,tags}
+      let dataMovie = {title,overview,poster_path,popularity,tags}
+      console.log(_id)
+      redis.del('movie:data'+_id)
+      redis.del('movies:data')
       // console.log(dataMovie)
      try{
        let {data} = await axios({

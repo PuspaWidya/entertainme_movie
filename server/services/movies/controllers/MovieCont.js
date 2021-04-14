@@ -21,13 +21,12 @@ class MovieController{
     static async getOne(req,res){
        try{
             const data = await Movie.findOne(req.params.id)
-                res.status(200).json(data)
+            res.status(200).json(data)
        }
         catch(err){
         console.log(err)
         res.status(500).json(err)
-    } 
-    }
+    }}
 
     static async createMovie(req,res){
        
@@ -51,6 +50,8 @@ class MovieController{
         try{
             redis.del('movie:data')
             redis.del('movies:data')
+            console.log(req.body,'>>>>>>>>>>>>>>>>>>>>>>>>>')
+            console.log(req.params)
             let {title,overview,poster_path,popularity,tags} = req.body
             let arr = []
             arr.push(tags)

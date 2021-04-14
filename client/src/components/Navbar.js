@@ -25,8 +25,8 @@ export default function Navbar() {
                     </Link>
                 </li>
                 <li class="nav-item">
-                 <Link to="/"> 
-                    <a class="nav-link">HOME</a>
+                 <Link to="/favorite"> 
+                    <a class="nav-link">Favorite</a>
                     </Link>
                 </li>
                 <li class="nav-item">

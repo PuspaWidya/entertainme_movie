@@ -15,7 +15,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import "bootswatch/dist/lux/bootstrap.min.css";
 import Navbar from './components/Navbar'
 import Page from './components/page'
-
+import Favorite from './components/Favorite'
 
 function App() {
   return (
@@ -39,7 +39,11 @@ function App() {
            <Route path="/edit/:id">
                <Edit/>
           </Route>
-         
+
+          <Route path="/favorite">
+               <Favorite/>
+          </Route>
+
           <Route exact path="/">
             <Home/>
           </Route>

@@ -1,9 +1,7 @@
 import React ,{useState}from 'react';
 import { useQuery, gql ,useMutation} from '@apollo/client';
-import Page from './page'
-import AddMovie from './Add'
-
 import { useHistory } from "react-router-dom";
+import {favMovieVar} from '../config/vars'
 
 const GET_MOVIES = gql`
     query movie{
@@ -54,10 +52,15 @@ const [movieId,setMovieId]= useState(null)
 
 
 function showOne (id){
-    // setMovieId(id)
     history.push(`/movie/${id}`);
 }
 
+function addToFav(movie){
+    const existingFav = favMovieVar()
+    // const data = existingFav.concat(movie)
+    // favMovieVar(data)
+    favMovieVar([movie,...existingFav])
+}
 
 
 if(loading){
@@ -67,8 +70,6 @@ if(loading){
 }
 
     return (
-       
-
         <>
         <div>
             {data.Movies.map(movie =>{
@@ -80,6 +81,8 @@ if(loading){
                     onClick={()=>showOne(movie._id)}>click</button> 
                     <button
                     onClick={()=>deleteOne(movie._id)}>Delete</button>
+                     <button
+                    onClick={()=>addToFav(movie)}>Favorite</button>
                     </>
                     
                 )
